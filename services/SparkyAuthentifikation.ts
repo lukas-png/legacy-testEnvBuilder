@@ -11,11 +11,13 @@ import * as Backend from "stumgmtbackend";
 export default class SparkyAuthentifikation {
     
     private config: Auth.Configuration;
+    private accesstoken: string = "";
 
 
     constructor() {
 
         this.config = SparkyAuthentifikation.getConfig();
+    
 
     }
     
@@ -36,6 +38,9 @@ export default class SparkyAuthentifikation {
         try {
             let response = await auth.authenticate(credentials);
             returnInterface.data = response.data;
+            if(response.data.token != null && response.data.token.token != null) {
+              this.accesstoken = response.data.token.token;
+            }
             returnInterface.status = true;
         } catch(e) {
             console.log(e); // 401 false username or password
@@ -50,9 +55,16 @@ export default class SparkyAuthentifikation {
         authConfig.basePath= envVariables.sparkyurl;
         return authConfig;
     }
+    private getAuthConfig(): Auth.Configuration {
+        let authConfig = new Auth.Configuration();
+        authConfig.basePath= envVariables.sparkyurl;
+        authConfig.baseOptions= {  headers: { Authorization: "Bearer " + this.accesstoken } };
+        return authConfig;
+    }
 
-    public async createUser(username:string, password:string): Promise<string> {
-        let auth = new Auth.UserControllerApi(this.config);
+
+    public async createUser(username:string, password:string) : Promise<string> {
+        let auth = new Auth.UserControllerApi(this.getAuthConfig());
         let localuser: Auth.UsernameDto= {
             username: username
         };
@@ -63,7 +75,7 @@ export default class SparkyAuthentifikation {
                 newPassword: password,
             };
             
-          auth.editUser(user);
+            await auth.editUser(user);
           
           let testUser = new Auth.AuthControllerApi(this.config);
             let credentials: CredentialsDto = {
@@ -71,10 +83,10 @@ export default class SparkyAuthentifikation {
                 password: password
             };
             let authinfo = await (await testUser.authenticate(credentials)).data;
-
+            console.log(authinfo.token);
             let stumgmtconfig = new Backend.Configuration();
             stumgmtconfig.basePath = envVariables.backendurl;
-            stumgmtconfig.baseOptions= {  headers: { Authorization: "Bearer " + authinfo.token } };
+            stumgmtconfig.baseOptions= {  headers: { Authorization: "Bearer " + authinfo.token?.token } };
             let backend = new Backend.AuthenticationApi(stumgmtconfig);
             return await (await backend.whoAmI()).data.id;
 

@@ -6,10 +6,10 @@ import SparkyAuthentifikation from "./services/SparkyAuthentifikation";
 import Stumgmtbackend from "./services/Stumgmtbackend";
 import Docker from "./docker";
 
-wait(20000).then(() => {
+wait(20000000).then(() => {
     console.log("Starting test environment creation");
     let api = new SparkyAuthentifikation();
-    api.authenticate("admin_user", "admin_pw").then((response) => {
+    api.authenticate("admin_user", "some_pw2").then((response) => {
         if(response.status) {
             if(response.data != null) {
             let token = response.data.token;
@@ -28,7 +28,10 @@ wait(20000).then(() => {
             }
         
         });
+    }).catch((e) => {
+        console.log(e);
     });
+
 
     function wait(seconds: number) {
         return new Promise(vars => setTimeout(vars, seconds));

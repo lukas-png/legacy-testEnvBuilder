@@ -20,7 +20,7 @@ public static async createUser(spark: SparkyAuthentifikation): Promise<{adam: st
     let adam = await spark.createUser("adam","123456");
     let student1 = await spark.createUser("student1","123456");
     let student2 = await spark.createUser("student2","123456");
-    let exerciseserver = await spark.createUser("exerciseserver","123456");
+    let exerciseserver = await spark.createUser("exerciseserver","some_pw5");
     return {adam, student1, student2, exerciseserver};
 }
 
