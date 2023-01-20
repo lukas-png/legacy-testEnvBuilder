@@ -1,5 +1,5 @@
 
-cat >./env.ts<<EOF
+cat > ./env.ts <<EOF
 import { env } from './interface/envinterface';
 //overrided by startup.sh
 export const envVariables: env = {
