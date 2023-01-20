@@ -17,4 +17,11 @@ jobs:
     - name: make the tar
       run: tar czf Client.tar.gz interface services docker.ts env.ts index.ts package.json package-lock.json tsconfig.json
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    - uses: docker/build-push-action@v1
+      with:
+           username: YOURNAME
+           password: ${{ secrets.GITHUB_TOKEN }}
+           registry: docker.pkg.github.com
+           repository: YOURNAME/publish-packages/game
+           tag_with_sha: true
+          
