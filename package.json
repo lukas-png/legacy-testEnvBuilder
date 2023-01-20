@@ -1,0 +1,17 @@
+{
+  "name": "testenvbuilder",
+  "version": "1.0.0",
+  "description": "test environment for docker legacy",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Lukas Dönges",
+  "license": "MIT",
+  "dependencies": {
+    "exerciseserverclientlib": "^1.1.1",
+    "sparkyservice": "^2.0.1",
+    "stumgmtbackend": "^3.0.0"
+  }
+}
