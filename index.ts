@@ -6,7 +6,7 @@ import SparkyAuthentifikation from "./services/SparkyAuthentifikation";
 import Stumgmtbackend from "./services/Stumgmtbackend";
 import Docker from "./docker";
 
-wait(20000).then(() => {
+wait(40000).then(() => {
     console.log("Starting test environment creation");
     let api = new SparkyAuthentifikation();
     api.authenticate("admin_user", "some_pw2").then((response) => {
