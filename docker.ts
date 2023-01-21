@@ -8,8 +8,8 @@ export default class Docker {
 public static async createTestEnvironment(spark: SparkyAuthentifikation, backend: Stumgmtbackend): Promise<void> {
     let user = await this.createUser(spark);
     let courseid = await this.createCourse(backend, user.adam);
+    await this.enrollStudents([user.student1, user.student2, user.exerciseserver], courseid, backend);
     await this.enableSubmissionServer(courseid, user.exerciseserver, ChangeCourseRoleDtoRoleEnum.LECTURER, "exercise-submission-server", "http://exercise-submitter-server:8080/notify");
-    await this.enrollStudents([user.student1, user.student2], courseid, backend);
     let groupid = await this.createGroup(backend, courseid, [user.student1, user.student2], "JP001");
     let assignmentid = await this.createAssignments(backend, courseid);
     await this.changeAssignmentState(backend, courseid, assignmentid);
