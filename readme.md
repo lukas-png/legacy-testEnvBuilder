@@ -1,3 +1,7 @@
+[![Docker](https://github.com/lukas-png/legacy-testEnvBuilder/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/lukas-png/legacy-testEnvBuilder/actions/workflows/docker-publish.yml)
+
+
+
 - run `npm install`
 - install typescript if you havnt already `npm install -g typescript`
 
