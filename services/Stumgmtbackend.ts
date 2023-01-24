@@ -1,5 +1,5 @@
 import * as Stumgmt from "stumgmtbackend";
-import { AssignmentApi, AssignmentRegistrationApi, AuthenticationApi, CourseCreateDto } from "stumgmtbackend";
+import { AssignmentApi, AssignmentRegistrationApi, AssignmentUpdateDto, AuthenticationApi, CourseCreateDto, SubmissionConfigDto } from "stumgmtbackend";
 import { envVariables } from "../env";
 
 
@@ -140,6 +140,40 @@ export default class Stumgmtbackend {
                 events: "ALL"
             }
             await notification.subscribe(subscriber, courseid, subscriber.name);
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
+    public async setAssignmentConfig(courseid: string, assignmentid: string, toolname: string, config: string) {
+        try {
+            let api = new Stumgmt.AssignmentApi(this.config);
+            let assignment = await api.getAssignmentById(courseid, assignmentid);
+            let configs = assignment.data.configs;
+            let found = false;
+
+            if(configs != undefined){
+                for(let i = 0; i < configs.length; i++){
+                    if(configs[i].tool == toolname){
+                        configs[i].config = config;
+                        found = true;
+                        break;
+                    }
+                }
+            } 
+            if(!found){
+                if(configs == undefined) {
+                    configs = [];
+                    configs.push({tool: toolname, config: config});
+                } else if (configs != undefined){
+                    configs.push({tool: toolname, config: config});
+                }
+            }
+            let update: AssignmentUpdateDto = {
+                configs: configs
+            }
+            
+            await api.updateAssignment(update, courseid, assignmentid);
         } catch(e) {
             console.log(e);
         }

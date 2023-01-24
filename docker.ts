@@ -12,6 +12,8 @@ public static async createTestEnvironment(spark: SparkyAuthentifikation, backend
     await this.enableSubmissionServer(courseid, user.exerciseserver, ChangeCourseRoleDtoRoleEnum.LECTURER, "exercise-submission-server", "http://exercise-submitter-server:8080/notify");
     let groupid = await this.createGroup(backend, courseid, [user.student1, user.student2], "JP001");
     let assignmentid = await this.createAssignments(backend, courseid);
+    await this.setAssignmentToolConfigString(backend, courseid, assignmentid, "exercise-submitter-checks", "[{\"check\":\"encoding\",\"rejecting\":true}, {\"check\":\"javac\"},"
+                                                                                                            + "{\"check\":\"checkstyle\",\"rules\":\"checkstyle.xml\"}]");
     await this.changeAssignmentState(backend, courseid, assignmentid);
 
 }
@@ -25,11 +27,11 @@ public static async createUser(spark: SparkyAuthentifikation): Promise<{adam: st
 }
 
 public static async createCourse(backend: Stumgmtbackend, adam: string): Promise<string> {
-let courseid = await backend.createCourse("adam","java", "wise2021", "Programmierpraktikum Java");
-return courseid;
+    let courseid = await backend.createCourse("adam","java", "wise2021", "Programmierpraktikum Java");
+    return courseid;
 }
 public static async enableSubmissionServer(courseid: string, studentid: string,role: ChangeCourseRoleDtoRoleEnum,
-     notificationname: string, notificationurl: string): Promise<void> {
+    notificationname: string, notificationurl: string): Promise<void> {
         let backend = await this.getAuthentificated("adam");
         await backend.updateUserRole(courseid, studentid, role);
         await backend.createNotification(courseid,notificationname,notificationurl);
@@ -40,11 +42,11 @@ public static async getAuthentificated(username: string): Promise<Stumgmtbackend
     let response = await api.authenticate(username, "123456");
     if(response.status) {
         if(response.data != null) {
-          let token = response.data.token;
-          if(token != null && token.token != null)    {
-            let accesstoken = token.token;
-            return new Stumgmtbackend(accesstoken);
-          }
+            let token = response.data.token;
+            if(token != null && token.token != null)    {
+                let accesstoken = token.token;
+                return new Stumgmtbackend(accesstoken);
+            }
         }
     }
     return Promise.reject("Could not authenticate");
@@ -66,6 +68,9 @@ public static async createAssignments(backend: Stumgmtbackend, courseid: string)
     return await backend.createAssignment(courseid,"Homework01");
 }
 
+public static async setAssignmentToolConfigString(backend: Stumgmtbackend, courseid: string, assignmentid: string, toolName: string, configString: string) {
+    await backend.setAssignmentConfig(courseid, assignmentid, toolName, configString);
+}
 public static async changeAssignmentState(backend: Stumgmtbackend, courseid: string, assignmentid: string) {
     await backend.changeAssignmentState(courseid, assignmentid, AssignmentUpdateDtoStateEnum.INPROGRESS);
 }
